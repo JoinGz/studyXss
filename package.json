@@ -1,0 +1,23 @@
+{
+  "name": "nodejsCSRF",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "app": "node app.js"
+  },
+  "author": "Gz",
+  "license": "ISC",
+  "devDependencies": {
+    "body-parser": "^1.6.5",
+    "cookie-parser": "^1.4.4",
+    "express": "^4.16.3",
+    "express-session": "^1.7.6"
+  },
+  "dependencies": {
+    "csurf": "^1.9.0",
+    "ejs": "^2.6.1",
+    "xss": "^1.0.6"
+  }
+}
