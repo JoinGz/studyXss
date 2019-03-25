@@ -1,17 +1,39 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
   <title>Document</title>
 </head>
+
 <body>
-  <div>
-    <%= text %>
+  <div id="div">
   </div>
 </body>
+<style>
+  div {
+    height: 500px;
+    background: #ccc;
+  }
+</style>
 <script>
-  // document.body.innerHTML = `<%= text %>`
+  let div = document.querySelector('#div')
+  document.body.onclick = function () {
+    let ajax = new XMLHttpRequest()
+    ajax.open("POST", "xss", true);
+    ajax.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+    ajax.send("_csrf=<%= auth%>");
+    ajax.onreadystatechange = function () {
+      if (ajax.readyState == 4 && ajax.status == 200) {
+        console.log(JSON.parse(ajax.responseText).text);
+        
+        // div.innerHTML = JSON.parse(ajax.responseText).text;
+        document.write(JSON.parse(ajax.responseText).text)
+      }
+    }
+  }
 </script>
+
 </html>

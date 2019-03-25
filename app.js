@@ -6,12 +6,25 @@ let csurfAuth = csrf()
 let bodyParser = require('body-parser')
 let xss = require('xss')
 let xssOptions = {
+  // 白名单的不会过滤；白名单数据不会过滤，默认配置只会保留白名单属性
   whiteList: {
     a: ["href", "title", "target"],
-    p: ['class', 'id']
+    p: ['class', 'id'],
+    div: ['style']
   },
   escape: function escapeHtml(html) {
+    console.log('进入 escape')
     return html.replace(/</g, "&lt;").replace(/>/g, "&gt;");
+  },
+  // 过滤CSS
+  css: {
+    // 全过滤
+    whiteList: {
+      
+    }
+  },
+  onTag(name,val,t){
+    // console.log(name,val,t);
   }
 }
 let myxss = new xss.FilterXSS(xssOptions);
@@ -68,13 +81,23 @@ app.get('/json', (req, res) => {
   console.log(json);
   res.end(JSON.stringify(json))
 })
-app.post('/xss', (req, res) => {
-  req.body.text = myxss.process(req.body.text);
-  console.log(req.body.text);
-  
-  req.body.text = req.body.text.replace(/amp;/g, '');
+app.get('/xss', (req, res) => {
   res.render('xss', {
-    text: req.body.text
+    auth: req.csrfToken()
+  })
+})
+app.post('/xss', (req, res) => {
+  // req.body.text = myxss.process(req.body.text);
+  // console.log(req.body.text);
+  
+  // req.body.text = req.body.text.replace(/amp;/g, '');
+  // res.render('xss', {
+  //   text: req.body.text
+  // })
+  let mm = myxss.process('<p>123</p><script>alert(55)</script><div style="width:500px;" id="l"></div>')
+  console.log(mm);
+  res.json( {
+    text: mm
   })
 })
 // 使用方法的错误处理
@@ -83,7 +106,7 @@ app.use(function (err, req, res, next) {
 
   // CSRF验证失败
   res.status(403)
-  res.send('验证数百')
+  res.send('csrf验证失败')
 })
 
 app.listen(8080, () => {
